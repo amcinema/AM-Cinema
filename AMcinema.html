@@ -1,0 +1,872 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+
+    <title> AM Cinema </title>
+
+    <!-- implementazione di Material e VueMaterial -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+    <!-- implementazione di Vue -->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-material@beta"></script>
+    <script src="https://unpkg.com/vue-router"></script>
+    <!-- implementazione di Firebase -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-firestore.js"></script>
+
+    <script>
+      // Configurazione di Firebase
+      var firebaseConfig = {
+      apiKey: "AIzaSyB2vT_mhr1t7CLk6fNjs8-Vu2shtSD-Ifs",
+      authDomain: "am-cinema-c7a05.firebaseapp.com",
+      databaseURL: "https://am-cinema-c7a05.firebaseio.com",
+      projectId: "am-cinema-c7a05",
+      storageBucket: "",
+      messagingSenderId: "107281194962",
+      appId: "1:107281194962:web:94ac17a8b409bfcf37b20b"
+      };
+
+      // Inizializzazione Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      var db = firebase.firestore();
+    </script>
+  </head>
+
+  <style>
+    /* VH (Viewport Height): gestisce il dimensionamento di un elemento in relazione all'altezza della finestra del browser */
+    #app {
+      height: 100vh;
+    }
+  </style>
+
+  <body>
+
+    <!-- Header e Menu -->
+    <div class="page-container">
+      <md-app id="app" md-waterfall md-mode="fixed">
+        <md-app-toolbar class="md-primary" style="background-color: #4286f5">
+          <div>
+            <div class="md-toolbar-section-start">
+              <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
+                <md-icon>menu</md-icon>
+              </md-button>
+            </div>
+          </div>
+          <router-link tag="div" :to="'/home'">
+            <md-button> AM Cinema </md-button>
+          </router-link>
+        </md-app-toolbar>
+  
+        <md-app-drawer :md-active.sync="menuVisible">
+          <br><br>
+          <md-toolbar class="md-transparent" md-elevation="0">AM Cinema</md-toolbar>
+
+          <md-list>
+            <router-link tag="md-list-item" to="/home">
+              <md-icon>home</md-icon>
+              <div class="md-list-item-text">Home</div>
+            </router-link>
+    
+            <router-link tag="md-list-item" to="/films">
+              <md-icon>theaters</md-icon>
+              <div class="md-list-item-text">Film</div>
+            </router-link>
+    
+            <router-link tag="md-list-item" to="/categorie">
+              <md-icon>style</md-icon>
+              <div class="md-list-item-text">Categorie</div>
+            </router-link>
+
+            <router-link tag="md-list-item" to="/programmazione">
+              <md-icon>play_arrow</md-icon>
+              <div class="md-list-item-text">Prossimamente</div>
+            </router-link>
+    
+            <router-link tag="md-list-item" to="/contatti">
+              <md-icon>email</md-icon>
+              <div class="md-list-item-text">Contatti</div>
+            </router-link>
+    
+          </md-list>
+        </md-app-drawer>
+
+      <md-app-content>
+        <router-view></router-view>
+      </md-app-content>
+
+     </md-app>
+</div>
+
+    <!-- Pagina HOME -->
+    <template id="home">
+      <div>
+       <div>
+         <img src="https://firebasestorage.googleapis.com/v0/b/am-cinema-c7a05.appspot.com/o/banner-film.png?alt=media&token=28df8d35-9c4b-4844-8060-22aa91e1cc88" alt ="Caricamento immagine"  style="width:100%; height: auto; margin-top: -20px;">
+       </div>
+
+        <br><br>
+        <div style="padding: 10px 50px">
+          <h1 style = "color: #4286f5">
+             Ben arrivato in <b>AM Cinema</b>!
+          </h1>
+
+         <h3>
+           Anche tu sei un appassionato di film?
+         </h3><br>
+
+          <span>
+            AM Cinema raccoglie i film più guardati, conosciuti e chiacchierati in Italia.<br><br>
+            La cosa che più ci sta a cuore è il TUO parere! Facci sapere attraverso una votazione e, se vuoi,
+            anche attraverso un commento quello che pensi riguardo i film che troverai all'interno del nostro sito!<br><br>
+            Troverai i vari film divisi per categoria, in questo modo troverai subito quello che stai cercando!
+          </span><br><br>
+
+          <br><md-divider></md-divider><br>
+
+          <span>
+            Il nostro sito è strutturato in cinque pagine, di cui una è ovviamente questa, in cui ti trovi in questo momento.<br><br>
+            Nella pagina "Film" trovi tutti i film del nostro Database, mentre in quella "Categorie" sono suddivisi per il genere
+            cinematografico di appartenenza.<br><br>
+            Nella pagina "Prossimamente", invece, trovi i tre film più recenti in programmazione per il prossimo periodo.<br><br>
+            Infine, la pagina "Contatti": se hai bisogno di contattarci per domande o chiarimenti, trovi i nostri riferimenti nella pagina 
+            dedicata.<br>
+            Al momento siamo presenti in due uffici: Bronzolo e Pergine Valsugana. Puoi contattarci attraverso telefono o e-mail.<br>
+            
+          </span><br><br>
+
+          
+       </div>
+      </div>
+    </template> <!-- HOME -->
+
+    <!-- Pagina FILM -->
+    <template id="films">
+      <div style="padding: 10px 50px">
+          <br>
+          <h1 style="color: #4286f5">
+            Elenco completo dei film:</b>
+          </h1>
+          <br>
+          <md-divider></md-divider> <br><br>
+          <div class="md-layout md-gutter-3">
+            <div v-for="p in films" class="md-layout-item md-size-25 md-medium-size-50 md-xsmall-size-100">
+              <md-card md-with-hover>
+                <md-ripple>
+                  <!-- Di ogni film viene mostrato: img, titolo, categoria di appartenenza, anno, regia -->
+                  <router-link tag="div"  :to="'/dettaglio/' + p.id">
+                    <md-card-media>
+                      <img :src="p.data.immagine" alt="Caricamento immagine in corso">
+                    </md-card-media>
+               
+                  <md-card-header>
+                    <div class="md-title" style = "color: #4286f5; font-weight: bold; font-size: 112%!important;">
+                      {{p.data.titolo}}
+                    </div>
+                    <div class="md-subhead">
+                      {{p.data.categoria}}
+                    </div>
+                    <div class="md-subhead">
+                      {{p.data.anno}}
+                    </div>
+                    <div class="md-subhead">
+                      {{p.data.regia}}
+                    </div>
+                  </md-card-header>
+                </router-link>
+                <!-- E' possibile valutare il film attraverso una votazione e/o un commento  -->
+                <md-card-actions class="md-alignment" >
+                  <md-button class="md-raised" style="background-color: #4286f5; color: white" @click = "mostra_dialog_valutazione(p.id)">Vota</md-button>
+                  <md-button class="md-raised" style="background-color: #4286f5; color: white" @click = "mostra_dialog_commento(p.id)">Commenta</md-button>
+                </md-card-actions>
+                <br>
+              </md-ripple>
+              </md-card><br>
+            </div>
+          </div><br>
+
+          <!-- Finestra per inserire il commento -->
+          <div>
+            <md-dialog :md-active.sync="dialog_commento">
+              <template>
+                <div  style = "padding: 24px 24px 8px 24px">
+                  <md-dialog-title style = "color: #4286f5; font-weight: bold">
+                    Cosa ne pensi del film?
+                  </md-dialog-title>
+
+                  <md-field>
+                    <label>Inserisci qui il tuo nome</label>
+                    <md-input v-model="nome_inserito"></md-input>
+                  </md-field>
+                  <md-field>
+                    <label>Inserisci qui il tuo commento</label>
+                    <md-input v-model="testo_inserito"></md-input>
+                  </md-field>
+
+                  <!-- Bottoni dell'inserimento del commento (annulla; conferma) -->
+                  <md-dialog-actions>
+                    <md-button @click="dialog_commento = false">Annulla</md-button>
+                    <md-button class = "md-primary" @click="salva_commento" :disabled="!testo_inserito || !nome_inserito">Conferma</md-button>
+                  </md-dialog-actions>
+                </div>
+              </template>
+            </md-dialog>
+          </div>
+
+          <!-- Finestra per inserire il voto -->
+          <div>
+            <md-dialog :md-active.sync="dialog_valutazione">
+              <template>
+
+                <div style = "padding: 24px">
+                  <md-dialog-title style = "color: #4286f5; font-weight: bold">
+                    Come valuti il film?
+                  </md-dialog-title><br><br>
+                  <md-dialog-subhead>
+                    Inserisci un numero compreso tra 1 e 5
+                  </md-dialog-subhead>
+
+                  <md-field>
+                    <label>Inserisci qui il tuo voto</label>
+                    <md-input v-model="voto_inserito"></md-input>
+                  </md-field>
+                </div>
+
+                <!-- Bottoni dell'inserimento voto  -->
+                <md-dialog-actions>
+                  <md-button @click="dialog_valutazione = false">Annulla</md-button>
+                  <md-button class = "md-primary" @click="salva_valutazione" :disabled="!voto_inserito || voto_inserito > 5 || voto_inserito < 1">
+                    Conferma
+                  </md-button>
+                </md-dialog-actions>
+
+              </template>
+            </md-dialog>
+          </div>
+        </div>
+      </div>
+    </template> <!-- FILM -->
+
+    <!-- Pagina DETTAGLIO FILM -->
+    <template id="dettaglio">
+      <div style="display: flex; align-items: center; flex-wrap: wrap">
+        <div class="md-layout-item md-size-50 md-medium-size-50 md-xsmall-size-100">
+          <div>
+              <md-button @click="$router.go(-1)">
+                <md-icon style="color:black;"> keyboard_arrow_left </md-icon> indietro
+              </md-button>
+          </div>
+          <div style="text-align: center">
+            <img :src="film.immagine" alt="Caricamento immagine in corso"> 
+          </div>
+       </div>
+    
+       <div class="md-layout-item md-size-50 md-medium-size-50 md-xsmall-size-100">
+        <md-card style="background-color: rgba(187, 187, 187, 0.2);">
+          <md-card-header>
+            <md-card-header-text>
+              <div class="md-title" style="color: #4286f5; font-style: italic">
+                {{ film.titolo }}
+              </div>
+              <div class="md-subhead" style="font-weight:bold">
+                {{ film.categoria }}
+              </div>
+              <div class="md-subhead" style="font-weight:bold">
+                {{ film.anno }}
+              </div>
+              <div class="md-subhead" style="font-weight:bold">
+                {{ film.regia }}
+              </div>
+            </md-card-header-text>
+          </md-card-header>
+          <md-card-content style="text-align:justify">
+            <span>
+              {{ film.descrizione }}
+            </span><br><br>
+            
+            <!-- Ogni film, oltre alle informazioni principali, presenta il resoconto dei commenti ricevuti e una media dei voti ricevuti -->
+            <div>
+              <span style="font-weight: bold">
+                Valutazione media:
+              </span><br>
+              <span v-if="conta_voti > 0">
+                <span style="font-weight: bold; color: #4286f5">
+                  {{ average + "/5"}}
+                </span>
+                <br>
+                {{ conta_voti }} persone hanno votato questo film.
+              </span>
+              <span v-else>Ancora nessun voto! Sii il primo a votare!</span>
+            </div><br>
+    
+            <div>
+              <span style="font-weight: bold">
+                Commenti:
+              </span><br>
+              <div v-if="lista_commenti.length > 0">
+                <div v-for="c in lista_commenti">
+                    <div v-if="(lista_commenti.indexOf(c) % 2 !== 0)">
+                      <span style="font-style: italic">
+                        {{ c }}
+                      </span>
+                      <md-divider />
+                    </div>
+                    <div v-else>
+                      <span>
+                        {{ c }}
+                      </span>
+                    </div>
+                </div>
+              </div>
+              <div v-else>
+                <span>
+                  Nessuno ha ancora commentato questo film!
+                </span>
+              </div>
+            
+          </md-card-content>
+        </md-card>
+      </div>
+    </div>
+    </template>
+    
+    <!-- Pagina CATEGORIE -->
+    <template id="categorie">
+      <div style="padding: 10px 50px">
+      <br>
+      <h1 style="color: #4286f5">
+        Categorie dei nostri film:</b>
+      </h1>
+      <br>
+      <md-divider></md-divider> <br><br>
+      <div class="md-layout md-gutter-3">
+        <div v-for="c in categorie" class="md-layout-item md-size-33 md-medium-size-50 md-xsmall-size-100">
+          <md-card md-with-hover>
+            <md-ripple></md-ripple>
+              <router-link tag="div" :to="'/categoria/' + c.data.titolo">
+              <md-card-media-cover>
+                 <md-card-media md-ratio="16:9">
+                   <img :src="c.data.immagine" alt="Caricamento immagine in corso">
+                 </md-card-media>
+                 <md-card-area>
+                    <md-card-header>
+                     <div class="md-title" style="font-weight: bold">
+                       {{ c.data.titolo }}
+                     </div>
+                   </md-card-header>
+                 </md-card-area>
+               </md-card-media-cover>
+             </router-link>
+            </md-ripple>
+          </md-card>
+          <br><br>
+          </div>
+        </div>
+      </div>
+    </template> <!-- CATEGORIE -->
+
+    <!-- Pagina specifica CATEGORIA -->
+    <template id="categoria">
+      <div style="padding: 10px 50px">
+        
+        <div>
+          <md-button @click="$router.go(-1)">
+            <md-icon style="color:black;">keyboard_arrow_left</md-icon> indietro
+          </md-button>
+        </div>
+
+        <br>
+        <h1 style="color: #4286f5">
+          Ecco i film per la categoria che hai scelto:</b>
+        </h1>
+        <br>
+
+        <div class="md-layout md-gutter-3">
+          <div v-for="p in films" class="md-layout-item md-size-25 md-medium-size-50 md-xsmall-size-100">
+            <md-card md-with-hover>
+              <md-ripple>
+                <router-link tag="div" :to="'/dettaglio/' + p.id">
+                  <md-card-media>
+                    <img :src="p.data.immagine" alt="Caricamento immagine in corso">
+                  </md-card-media>
+
+                <md-card-header>
+                  <div class="md-title" style="color: #4286f5; font-weight: bold; font-size: 112%!important;">
+                    {{p.data.titolo}}
+                  </div>
+                </md-card-header>
+              </router-link>
+                <div>
+                  <md-card-actions class="md-alignment" >
+                    <md-button class="md-raised" style="background-color: #4286f5; color: white" @click="mostra_dialog_valutazione(p.id)">Vota</md-button>
+                    <md-button class="md-raised" style="background-color: #4286f5; color: white" @click="mostra_dialog_commento(p.id)">Commenta</md-button>
+                  </md-card-actions><br>
+                </div>
+              
+              </md-ripple>
+            </md-card>
+            <br><br>
+          </div>
+        </div>
+
+        <!-- dialog box per inserire il commento -->
+        <div>
+          <md-dialog :md-active.sync="dialog_commento">
+            <template>
+              <div  style="padding: 24px 24px 8px 24px">
+                <md-dialog-title style = "color: #4286f5; font-weight: bold">
+                  Cosa ne pensi del film?
+                </md-dialog-title>
+
+                <md-field>
+                  <label>Inserisci qui il tuo nome</label>
+                  <md-input v-model="nome_inserito"></md-input>
+                </md-field>
+                <md-field>
+                  <label>Inserisci qui il tuo commento</label>
+                  <md-input v-model="testo_inserito"></md-input>
+                </md-field>
+                
+
+                <md-dialog-actions>
+                  <md-button @click="dialog_commento = false">Annulla</md-button>
+                  <md-button class="md-primary" @click="salva_commento" :disabled="!testo_inserito || !nome_inserito">Salva</md-button>
+                </md-dialog-actions>
+              </div>
+            </template>
+          </md-dialog>
+        </div>
+
+        <!-- dialog box per inserire il voto -->
+        <div>
+          <md-dialog :md-active.sync="dialog_valutazione">
+            <template>
+              <div style="padding: 24px">
+                <md-dialog-title style="color: #1290b4; font-weight: bold">
+                  Come valuti il film?
+                </md-dialog-title><br><br>
+                <md-dialog-subhead>
+                  Inserisci un numero compreso tra 1 e 5
+                </md-dialog-subhead>
+                <md-field>
+                  <label>Inserisci qui il tuo voto</label>
+                  <md-input v-model="voto_inserito"></md-input>
+                </md-field>
+              </div>
+
+              <md-dialog-actions>
+                <md-button @click="dialog_valutazione = false">Annulla</md-button>
+                <md-button class="md-primary" @click="salva_valutazione" :disabled="!voto_inserito || voto_inserito > 5 || voto_inserito < 1">
+                  Salva
+                </md-button>
+              </md-dialog-actions>
+            </template>
+          </md-dialog>
+        </div>
+      </div>
+    </template> <!-- specifica CATEGORIA -->
+
+    <!-- Pagina CONTATTI -->
+    <template id="contatti">
+      <div style="padding: 10px 50px">
+        <br><br>
+        <h1 style = "color: #4286f5">
+          Contattaci senza impegno!</b>
+        </h1><br>
+        <md-divider></md-divider> <br>
+        <h3>
+          Contattaci presso gli uffici di:
+        </h3>
+        
+        <div v-for="i in contatti" style="display:flex; flex-wrap: wrap">
+          <md-list class="md-double-line">
+            <md-list-item>
+              <div class="md-list-item-text">
+                <span style="font-weight: bold; color: #4286f5;">
+                  {{ i.id }}
+                </span>
+                <br>
+                <p style="font-weight:bold;">
+                  Telefono:
+                </p>
+                <span style="font-style: italic; color: black;">
+                  {{ i.data.telefono }}
+                </span>
+                <br>
+                <p style="font-weight:bold;">
+                  E-mail: 
+                </p>
+                <span style="font-style: italic;">
+                  {{ i.data.email }}
+                </span>
+                <br><br>
+              </div>
+            </md-list-item>
+          </md-list>
+        </div>
+      </div>
+    </template> <!-- CONTATTI -->
+
+
+    <!-- Pagina PROGRAMMAZIONE -->
+    <template id="programmazione">
+      <div style="padding: 10px 50px">
+        <br>
+        <h1 style="color: #4286f5">
+          Prossimamente al cinema...</b>
+        </h1>
+
+        <h3>
+          Ecco i film che usciranno tra poco!
+        </h3>
+        <br><md-divider></md-divider><br>
+
+        <span>
+          Resta sintonizzato sul nostro sito!<br><br>
+          Appena questi film usciranno, potrai valutarli e commentarli, come sempre. Ti aspettiamo! <br><br>
+        </span><br>
+
+        <div class="md-layout md-gutter-3">
+          <div v-for="m in programmazione" class="md-layout-item md-size-25 md-medium-size-50 md-xsmall-size-100">
+            <md-card md-with-hover>
+              <md-ripple>
+                  <md-card-media>
+                    <img :src="m.data.immagine" alt="Caricamento immagine in corso">
+                  </md-card-media>
+             
+                <md-card-header>
+                  <div class="md-title" style = "color: #4286f5; font-weight: bold; font-size: 112%!important;">
+                    {{m.data.titolo}}
+                  </div>
+                  <div class="md-subhead">
+                    Genere: {{m.data.categoria}}
+                  </div>
+                  <div class="md-subhead">
+                    Data di uscita: {{m.data.dataUscita}}
+                  </div>
+                </md-card-header>
+              
+                <md-card-expand>
+                  <md-card-actions md-alignment="space-between">
+                    <md-card-expand-trigger>
+                      <md-button class="md-icon-button">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                      </md-button>
+                    </md-card-expand-trigger>
+                  </md-card-actions>
+          
+                  <md-card-expand-content>
+                    <md-card-content style="text-align:justify">
+                     {{ m.data.descrizione }}
+                    </md-card-content>
+                  </md-card-expand-content>
+                </md-card-expand>
+                <md-ripple>
+            </md-card><br>
+          </div>
+      </div>
+    </template> <!-- PROGRAMMAZIONE -->
+
+    
+    
+    <!---------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+    <!-- codice JavaScript -->
+    <script>
+      // collegamento al database e definizione delle variabili che contengono le raccolte del database
+      var db = firebase.firestore();
+      var films = db.collection("films");
+      var commenti = db.collection("commenti");
+      var categorie = db.collection("categorie");
+      var valutazioni = db.collection("valutazioni");
+      var programmazione = db.collection("programmazione")
+      var contatti = db.collection("contatti");
+    </script>
+
+    <script>
+        // creazione router
+        Vue.use(VueMaterial.default)
+        Vue.use(VueRouter)
+        Vue.component('router-link', Vue.options.components.RouterLink)
+        Vue.component('router-view', Vue.options.components.RouterView)
+
+        // HOME
+        const Home = Vue.component('home', {
+            template: '#home',
+            created: function() {
+              var me = this;
+              db.collection("categorie").get().then(function(res) {
+                const list = [];
+                res.forEach(function(categoria) {
+                  list.push({id: categoria.id, data: categoria.data()});
+                });
+                me.categorie = list;
+              });
+            },
+            data: function() {
+              return {
+                categorie: []
+              }
+            },
+          });
+          
+        // Pagina FILM (commento e valutazione)
+        const Films = Vue.component('films', {
+            template: '#films',
+            created: function() {
+              var me = this;
+              db.collection("films").get().then(function(res) {
+                const list = [];
+                res.forEach(function(film) {
+                  list.push({id: film.id, data: film.data()});
+                });
+                me.films = list;
+              });
+            },
+            data: function() {
+              return {
+                films: [],
+                id_film_corrente: null,
+                testo_inserito: null,
+                dialog_commento: false,
+                nome_inserito: null,
+                voto_inserito: null,
+                dialog_valutazione: false
+              }
+            },
+            // commento e valutazione
+            methods: {
+              mostra_dialog_commento: function(id){
+                this.id_film_corrente = id;
+                this.dialog_commento = true;
+                this.testo_inserito = null;
+                this.nome_inserito = null;
+              },
+              
+              salva_commento: function(){
+                var me = this;
+                  db.collection("commenti").add({
+                    id_film: this.id_film_corrente,
+                    testo: this.testo_inserito,
+                    nome: this.nome_inserito
+                  }).then(function() {
+                    me.dialog_commento = false
+                  })
+              },
+            
+              mostra_dialog_valutazione: function(id){
+                this.id_film_corrente = id;
+                this.dialog_valutazione = true;
+                this.voto_inserito = null;
+              },
+              
+              salva_valutazione: function(){
+                var me = this;
+                db.collection("valutazioni").add({
+                  id_film: this.id_film_corrente,
+                  voto: this.voto_inserito
+                }).then(function() {
+                  me.dialog_valutazione = false
+                })
+              }
+            }
+          });
+
+          // Pagina DETTAGLIO (visualizzazione commenti e valutazioni)
+          const Dettaglio = Vue.component('dettaglio', {
+            template: '#dettaglio',
+            created: function() {
+              var me = this;
+
+              db.collection("films").doc(this.$route.params.id).get().then(function(res){
+                me.film = res.data();
+              });
+              
+              db.collection("commenti").where("id_film", "==", this.$route.params.id).get().then(function(res){
+                const list = [];
+                res.forEach(function(r) {
+                    list.push(r.data().testo);
+                    list.push(r.data().nome)
+                });
+                me.lista_commenti = list;
+              });
+              
+              db.collection("valutazioni").where("id_film", "==", this.$route.params.id).get().then(function(res){
+                somma = 0;
+                conta = 0;
+                res.forEach(function(r) {
+                  somma += parseInt(r.data().voto);
+                  conta++;
+                });
+                if (conta > 0) {
+                  me.average = somma/conta;
+                  me.conta_voti = conta;
+              }
+
+              });
+            },
+            data: function() {
+              return {
+                film: {},
+                lista_commenti: [],
+                average: 0,
+                conta_voti: 0
+              }
+            }
+          });
+
+          // Pagina CATEGORIE 
+          const Categorie = Vue.component('categorie', {
+            template: '#categorie',
+            created: function() {
+              var me = this;
+              db.collection("categorie").get().then(function(res) {
+                const list = [];
+                res.forEach(function(cat) {
+                  list.push({id: cat.id, data: cat.data()});
+                });
+                me.categorie = list;
+              });
+            },
+            data: function() {
+              return {
+                categorie: []
+              }
+            },
+          });
+
+          // Pagina CATEGORIE (commento e valutazione)
+          const Categoria = Vue.component('categoria', {
+            template: '#categoria',
+            created: function() {
+              var me = this;
+
+              db.collection("films").where("categoria", "==", this.$route.params.titolo).get().then(function(res){
+                const list = [];
+                res.forEach(function(r) {
+                  list.push({id: r.id, data: r.data()});
+                });
+                me.films = list;
+              });
+            },
+            data: function() {
+              return {
+                films: [],
+                id_film_corrente: null,
+                testo_inserito: null,
+                nome_inserito: null,
+                dialog_commento: false,
+                voto_inserito: null,
+                dialog_valutazione: false
+              }
+            },
+            methods: {
+              mostra_dialog_commento: function(id){
+                this.id_film_corrente = id;
+                this.dialog_commento = true;
+                this.testo_inserito = null;
+                this.nome_inserito = null
+              },
+              salva_commento: function(){
+                var me = this;
+                  db.collection("commenti").add({
+                    id_film: this.id_film_corrente,
+                    testo: this.testo_inserito,
+                    nome: this.nome_inserito
+                  }).then(function() {
+                    me.dialog_commento = false
+                  })
+              },
+              mostra_dialog_valutazione: function(id){
+                this.id_film_corrente = id;
+                this.dialog_valutazione = true;
+                this.voto_inserito = null;
+              },
+              salva_valutazione: function(){
+                var me = this;
+                db.collection("valutazioni").add({
+                  id_film: this.id_film_corrente,
+                  voto: this.voto_inserito
+                }).then(function() {
+                  me.dialog_valutazione = false
+                })
+              }
+            }
+          });
+
+          // Pagina CONTATTI
+          const Contatti = Vue.component('contatti', {
+            template: '#contatti',
+            created: function() {
+              var me = this;
+              db.collection("contatti").get().then(function(res) {
+                const list = [];
+                res.forEach(function(contatto) {
+                  list.push({id: contatto.id, data: contatto.data()});
+                });
+                me.contatti = list;
+              });
+            },
+            data: function() {
+              return {
+                contatti: []
+              }
+            },
+          });
+
+          // Pagina PROGRAMMAZIONE
+          const Programmazione = Vue.component('programmazione', {
+            template: '#programmazione',
+            created: function() {
+              var me = this;
+              db.collection("programmazione").get().then(function(res) {
+                const list = [];
+                res.forEach(function(prog) {
+                  list.push({id: prog.id, data: prog.data()});
+                });
+                me.programmazione = list;
+              });
+            },
+            data: function() {
+              return {
+                programmazione: []
+              }
+            },
+          });
+          
+
+        // Definizione del router
+          const router = new VueRouter({
+              routes: [
+                {path: '/films', component: Films},
+                {path: '/categorie', component: Categorie},
+                {path:'/categoria/:titolo', component: Categoria},
+                {path: '/dettaglio/:id', component: Dettaglio},
+                {path: '/home', component: Home},
+                {path: '/contatti', component: Contatti},
+                {path: '/programmazione', component: Programmazione},
+                {path: '*', component: Home}
+              ]
+            });
+
+          // Inizializzazione della barra di navigazione
+          new Vue({
+              router: router,
+              el: '#app',
+              data: {
+                menuVisible: false
+              }
+            });
+
+            
+
+    </script>
+  </body>
+</html>
